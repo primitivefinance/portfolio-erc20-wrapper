@@ -61,6 +61,30 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
         assertEq(wrapper, predictAddress());
     }
 
+    event Deploy(
+        address indexed portfolio,
+        uint24 indexed pairId,
+        uint64 poolId,
+        address tokenAsset,
+        address tokenQuote,
+        address wrapper
+    );
+
+    function test_deploy_emits_Deploy() public {
+        vm.expectEmit();
+
+        emit Deploy(
+            address(portfolio),
+            pairId,
+            poolId,
+            address(asset),
+            address(quote),
+            predictAddress()
+        );
+
+        factory.deploy(poolId);
+    }
+
     function predictAddress() public view returns (address) {
         string memory name =
             string.concat("Wrapped Portfolio ", "Asset", " - ", "Quote");
