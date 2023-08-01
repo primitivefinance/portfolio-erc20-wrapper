@@ -60,4 +60,33 @@ contract ERC20WrapperTest is Test, ERC1155TokenReceiver {
 
         wrapper = ERC20Wrapper(factory.deploy(poolId));
     }
+
+    function test_mint_updates_balances() public {
+        portfolio.allocate(
+            false,
+            address(this),
+            poolId,
+            uint128(1 ether),
+            type(uint128).max,
+            type(uint128).max
+        );
+
+        uint256 liquidity =
+            ERC1155(address(portfolio)).balanceOf(address(this), poolId);
+
+        ERC1155(address(portfolio)).setApprovalForAll(address(wrapper), true);
+        wrapper.mint(address(this), liquidity);
+
+        assertEq(wrapper.balanceOf(address(this)), liquidity);
+        assertEq(wrapper.totalSupply(), liquidity);
+
+        assertEq(
+            ERC1155(address(portfolio)).balanceOf(address(wrapper), poolId),
+            liquidity
+        );
+
+        assertEq(
+            ERC1155(address(portfolio)).balanceOf(address(this), poolId), 0
+        );
+    }
 }
