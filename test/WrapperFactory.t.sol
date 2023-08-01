@@ -90,6 +90,12 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
         factory.deploy(5352);
     }
 
+    function test_deploy_revert_when_wrapper_already_exists() public {
+        factory.deploy(poolId);
+        vm.expectRevert();
+        factory.deploy(poolId);
+    }
+
     function predictAddress() public view returns (address) {
         string memory name =
             string.concat("Wrapped Portfolio ", "Asset", " - ", "Quote");
