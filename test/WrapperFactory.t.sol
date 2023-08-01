@@ -48,12 +48,6 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
                 )
             )
         );
-
-        asset.mint(address(this), 1000 ether);
-        quote.mint(address(this), 1000 ether);
-
-        asset.approve(address(portfolio), type(uint256).max);
-        quote.approve(address(portfolio), type(uint256).max);
     }
 
     function test_deploy_returns_wrapper_address() public {
