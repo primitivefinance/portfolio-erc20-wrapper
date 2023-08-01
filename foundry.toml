@@ -3,6 +3,7 @@ libs = ["lib"]
 out = "out"
 remappings = [
   "solmate/=lib/solmate/src/",
+  "portfolio/=lib/portfolio/contracts/",
 ]
 src = "src"
 
