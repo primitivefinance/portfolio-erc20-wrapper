@@ -5,8 +5,8 @@ import "solmate/tokens/ERC20.sol";
 import "solmate/tokens/ERC1155.sol";
 
 contract ERC20Wrapper is ERC20, ERC1155TokenReceiver {
-    address immutable portfolio;
-    uint64 immutable poolId;
+    address immutable PORTFOLIO;
+    uint64 immutable POOL_ID;
 
     constructor(
         address portfolio_,
@@ -14,13 +14,13 @@ contract ERC20Wrapper is ERC20, ERC1155TokenReceiver {
         string memory name_,
         string memory symbol_
     ) ERC20(name_, symbol_, 18) {
-        portfolio = portfolio_;
-        poolId = poolId_;
+        PORTFOLIO = portfolio_;
+        POOL_ID = poolId_;
     }
 
     function mint(address to, uint256 amount) external {
-        ERC1155(portfolio).safeTransferFrom(
-            msg.sender, address(this), poolId, amount, ""
+        ERC1155(PORTFOLIO).safeTransferFrom(
+            msg.sender, address(this), POOL_ID, amount, ""
         );
 
         _mint(to, amount);
@@ -29,8 +29,8 @@ contract ERC20Wrapper is ERC20, ERC1155TokenReceiver {
     function burn(address to, uint256 amount) external {
         _burn(msg.sender, amount);
 
-        ERC1155(portfolio).safeTransferFrom(
-            address(this), to, poolId, amount, ""
+        ERC1155(PORTFOLIO).safeTransferFrom(
+            address(this), to, POOL_ID, amount, ""
         );
     }
 }
