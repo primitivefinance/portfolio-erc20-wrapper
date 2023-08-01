@@ -39,8 +39,11 @@ contract WrapperFactory {
         string memory symbol =
             string.concat("wP", assetSymbol, "-", quoteSymbol);
 
+        bytes32 salt =
+            keccak256(abi.encodePacked(tokenAsset, tokenQuote, poolId));
+
         address wrapper = address(
-            new ERC20Wrapper(
+            new ERC20Wrapper{salt: salt}(
                 PORTFOLIO,
                 poolId,
                 name,
