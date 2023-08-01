@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.19;
 
+import { IPortfolioState } from "portfolio/interfaces/IPortfolio.sol";
 import { PoolIdLib, PoolId } from "portfolio/libraries/PoolLib.sol";
 
-// FIXME: Importing directly from Portfolio repository doesn't work because of
-// conflicting `safeCastTo16` functions, I raw copied the interface for now.
-import "./interfaces/IPortfolioSate.sol";
 import "./ERC20Wrapper.sol";
 
 contract WrapperFactory {
@@ -35,12 +33,18 @@ contract WrapperFactory {
         string memory quoteName = ERC20(tokenQuote).name();
         string memory quoteSymbol = ERC20(tokenQuote).symbol();
 
+        string memory name =
+            string.concat("Wrapped Portfolio ", assetName, " - ", quoteName);
+
+        string memory symbol =
+            string.concat("wP", assetSymbol, "-", quoteSymbol);
+
         address wrapper = address(
-            new ERC20Wrapper (
+            new ERC20Wrapper(
                 PORTFOLIO,
                 poolId,
-                string(abi.encodePacked(assetName, "/", quoteName)),
-                string(abi.encodePacked(assetSymbol, "/", quoteSymbol))
+                name,
+                symbol
             )
         );
 
