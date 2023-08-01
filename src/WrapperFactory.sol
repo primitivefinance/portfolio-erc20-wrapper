@@ -22,7 +22,7 @@ contract WrapperFactory {
         PORTFOLIO = portfolio_;
     }
 
-    function deploy(uint64 poolId) external {
+    function deploy(uint64 poolId) external returns (address) {
         uint24 pairId = PoolIdLib.pairId(PoolId.wrap(poolId));
 
         (address tokenAsset,, address tokenQuote,) =
@@ -49,5 +49,7 @@ contract WrapperFactory {
         );
 
         emit Deploy(PORTFOLIO, pairId, poolId, tokenAsset, tokenQuote, wrapper);
+
+        return wrapper;
     }
 }
