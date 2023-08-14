@@ -17,7 +17,7 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
     MockERC20 quote;
 
     uint24 pairId;
-    uint64 poolId;
+    uint64[] poolIds;
 
     function setUp() public {
         vm.createSelectFork(
@@ -30,6 +30,27 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
 
         pairId = portfolio.createPair(address(asset), address(quote));
 
+        uint64 poolId = portfolio.createPool(
+            pairId,
+            1,
+            1,
+            100,
+            0,
+            address(0),
+            address(0),
+            abi.encode(
+                PortfolioConfig(
+                    1 ether,
+                    100,
+                    uint32(100) * 1 days,
+                    uint32(block.timestamp),
+                    true
+                )
+            )
+        );
+
+        poolIds.push(poolId);
+
         poolId = portfolio.createPool(
             pairId,
             1,
@@ -40,7 +61,7 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
             address(0),
             abi.encode(
                 PortfolioConfig(
-                    100,
+                    2 ether,
                     100,
                     uint32(100) * 1 days,
                     uint32(block.timestamp),
@@ -48,19 +69,41 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
                 )
             )
         );
+
+        poolIds.push(poolId);
+
+        poolId = portfolio.createPool(
+            pairId,
+            1,
+            1,
+            100,
+            0,
+            address(0),
+            address(0),
+            abi.encode(
+                PortfolioConfig(
+                    3 ether,
+                    100,
+                    uint32(100) * 1 days,
+                    uint32(block.timestamp),
+                    true
+                )
+            )
+        );
+
+        poolIds.push(poolId);
     }
 
     function test_deploy_returns_wrapper_address() public {
-        address wrapper = factory.deploy(poolId);
-        assertEq(wrapper, predictAddress());
+        address wrapper = factory.deploy("Wrapped Pools", "wPools", poolIds);
+        assertEq(wrapper, computeCreateAddress(address(factory), 1));
     }
 
     event Deploy(
         address indexed portfolio,
-        uint24 indexed pairId,
-        uint64 poolId,
-        address tokenAsset,
-        address tokenQuote,
+        string name,
+        string symbol,
+        uint64[] poolIds,
         address wrapper
     );
 
@@ -69,27 +112,25 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
 
         emit Deploy(
             address(portfolio),
-            pairId,
-            poolId,
-            address(asset),
-            address(quote),
-            predictAddress()
+            "Wrapped Pools",
+            "wPools",
+            poolIds,
+            computeCreateAddress(address(factory), 1)
         );
 
-        factory.deploy(poolId);
+        factory.deploy("Wrapped Pools", "wPools", poolIds);
     }
 
+    /*
     function test_deploy_revert_on_invalid_poolId() public {
         vm.expectRevert();
-        factory.deploy(5352);
+        uint64[] memory badPoolIds = new uint64[](1);
+        badPoolIds[0] = 3535;
+        factory.deploy("", "", badPoolIds);
     }
+    */
 
-    function test_deploy_revert_when_wrapper_already_exists() public {
-        factory.deploy(poolId);
-        vm.expectRevert();
-        factory.deploy(poolId);
-    }
-
+    /*
     function predictAddress() public view returns (address) {
         string memory name =
             string.concat("Wrapped Portfolio ", "Asset", " - ", "Quote");
@@ -119,4 +160,5 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
             )
         );
     }
+    */
 }

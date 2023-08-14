@@ -9,10 +9,9 @@ import "./ERC20Wrapper.sol";
 contract WrapperFactory {
     event Deploy(
         address indexed portfolio,
-        uint24 indexed pairId,
-        uint64 poolId,
-        address tokenAsset,
-        address tokenQuote,
+        string name,
+        string symbol,
+        uint64[] poolIds,
         address wrapper
     );
 
@@ -22,36 +21,21 @@ contract WrapperFactory {
         PORTFOLIO = portfolio_;
     }
 
-    function deploy(uint64 poolId) external returns (address) {
-        uint24 pairId = PoolIdLib.pairId(PoolId.wrap(poolId));
-
-        (address tokenAsset,, address tokenQuote,) =
-            IPortfolioState(PORTFOLIO).pairs(pairId);
-
-        string memory assetName = ERC20(tokenAsset).name();
-        string memory assetSymbol = ERC20(tokenAsset).symbol();
-        string memory quoteName = ERC20(tokenQuote).name();
-        string memory quoteSymbol = ERC20(tokenQuote).symbol();
-
-        string memory name =
-            string.concat("Wrapped Portfolio ", assetName, " - ", quoteName);
-
-        string memory symbol =
-            string.concat("wP", assetSymbol, "-", quoteSymbol);
-
-        bytes32 salt =
-            keccak256(abi.encodePacked(tokenAsset, tokenQuote, poolId));
-
+    function deploy(
+        string memory name,
+        string memory symbol,
+        uint64[] memory poolIds
+    ) external returns (address) {
         address wrapper = address(
-            new ERC20Wrapper{salt: salt}(
+            new ERC20Wrapper(
                 PORTFOLIO,
-                poolId,
+                poolIds,
                 name,
                 symbol
             )
         );
 
-        emit Deploy(PORTFOLIO, pairId, poolId, tokenAsset, tokenQuote, wrapper);
+        emit Deploy(PORTFOLIO, name, symbol, poolIds, wrapper);
 
         return wrapper;
     }
