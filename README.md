@@ -22,4 +22,4 @@ Please note that the factory contract is linked to a specific Portfolio contract
 
 | Network | Address |
 |---|---|
-| Sepolia | [0x2FAB69C9187f7F05E88a72404399bFE182C70dFd](https://sepolia.etherscan.io/address/0x2FAB69C9187f7F05E88a72404399bFE182C70dFd) |
+| Sepolia | [0xDccA88Cd8eEA8d5ff81cC7a2382B865240668444](https://sepolia.etherscan.io/address/0xDccA88Cd8eEA8d5ff81cC7a2382B865240668444) |
