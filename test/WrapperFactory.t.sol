@@ -10,7 +10,7 @@ import "../src/WrapperFactory.sol";
 contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
     // We're using a version of Portfolio deployed on Sepolia Testnet
     IPortfolio portfolio =
-        IPortfolio(0x3DedE8F8ac60cAe1f7AA76a92e91ED3ca38ba860);
+        IPortfolio(0x00fCd05052Bc1ADA7a4a4509A8876fC4DAa43fB6);
     WrapperFactory public factory;
 
     MockERC20 asset;
@@ -20,9 +20,7 @@ contract WrapperFactoryTest is Test, ERC1155TokenReceiver {
     uint64[] poolIds;
 
     function setUp() public {
-        vm.createSelectFork(
-            "https://eth-sepolia.g.alchemy.com/v2/0KtVQbIhpSOMzTrvCdt3XrgJtzknnkVB"
-        );
+        vm.createSelectFork(vm.envString("SEPOLIA_RPC_URL"));
         factory = new WrapperFactory(address(portfolio));
 
         asset = new MockERC20("Asset", "ASSET", 18);
